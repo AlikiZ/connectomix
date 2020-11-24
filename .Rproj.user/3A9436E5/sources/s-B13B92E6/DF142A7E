@@ -1,0 +1,24 @@
+{
+    "id": "DF142A7E",
+    "path": "~/Documents/connectomics/code/tocluster.R",
+    "project_path": "tocluster.R",
+    "type": "r_source",
+    "hash": "2751236305",
+    "contents": "",
+    "dirty": false,
+    "created": 1606212191057.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "cursorPosition": "4,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1606212571,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1606212571700,
+    "read_only": false,
+    "read_only_alternatives": []
+}
