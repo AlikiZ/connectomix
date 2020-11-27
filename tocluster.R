@@ -4,7 +4,7 @@ library(ggpubr)
 
 
 ## connection to neuprint API for dataset = "hemibrain:v1.1" by calling another script so as not to reveal token
-source("/home/alikiz/Documents/connectomics/code/loadhemibrain.R")
+source("/home/alikiz/Documents/WernerLab/code/loadhemibrain.R")
 
 ## getting some info for our cells of interest (MC61 & MC64 aka “MeTu") including the bodyIDs
 MC61.info = neuprint_search("MC61") 
@@ -61,3 +61,10 @@ fit2$size
 mydata <- data.frame(connect_mat, true_classes, fit$cluster, fit2$cluster)
 # calculate the match between real and predicted group
 sum((mydata$true_classes - mydata$fit.cluster)^2)
+
+
+# Compute dissimilarity matrix
+res.dist <- dist(connect_mat, method = "euclidean")
+# Compute hierarchical clustering
+res.hc <- hclust(res.dist, method = "ward.D2")
+plot(res.hc, cex = 0.5)
