@@ -59,20 +59,7 @@ names(true_classes) = rownames(connect_mat)
 heatmap(connect_mat)
 # normalize by dividing by the column sum
 scaled = scale(connect_mat, center=FALSE, scale=colSums(connect_mat))
-# PCA - not scaled and scaled --> the second plot of not scaled data reveals a better
-pca_res <- prcomp(connect_mat, scale. = TRUE)
-autoplot(pca_res, data = mydata, colour = "true_classes")
-somepca <- PCA(connect_mat, scale.unit = TRUE, graph = FALSE)
-fviz_pca_ind(somepca, geom.ind = "point", col.ind= mydata$label, palette = c("#00AFBB", "#E7B800"), axes.linetype = "blank", legend.title="Group")
 
-pca_res <- prcomp(connect_mat, scale. = FALSE)
-autoplot(pca_res, data = mydata, colour = "true_classes")
-somepca <- PCA(connect_mat, scale.unit = FALSE, graph = FALSE)
-fviz_pca_ind(somepca, geom.ind = "point", col.ind= mydata$label, palette = c("orange", "green3"), axes.linetype = "blank", legend.title="Group")
-fviz_pca_ind(somepca, geom.ind = "point", col.ind= mydata$label, palette = c("orange", "green3"), axes.linetype = "blank", legend.title="Group", axes = c(3,4))
-fviz_eig(somepca, addlabels = TRUE)
-# fviz_pca_var(res.pca, col.var = "black")  # for correlation circle of the variables, important: variables need deiffrent names
-# more: contribution of variables to PCi, variables according to their contributions to the principal components (dimension description)
 
 #### algorithms ####
 
@@ -105,15 +92,40 @@ clusterCut <- cutree(res.hc, 2)
 cm2 = as.matrix(table(Actual= true_classes, Predicted=clusterCut))
 cm2 
 
+#### PCA analysis ####
+# PCA - not scaled and scaled --> the second plot of not scaled data reveals a better result
+pca_res <- prcomp(connect_mat, scale. = TRUE)
+autoplot(pca_res, data = mydata, colour = "true_classes")
+somepca <- PCA(connect_mat, scale.unit = TRUE, graph = FALSE)
+fviz_pca_ind(somepca, geom.ind = "point", col.ind= mydata$label, palette = c("#00AFBB", "#E7B800"), axes.linetype = "blank", legend.title="Group")
+
+pca_res <- prcomp(connect_mat, scale. = FALSE)
+autoplot(pca_res, data = mydata, colour = "true_classes")
+somepca <- PCA(connect_mat, scale.unit = FALSE, graph = FALSE)
+fviz_pca_ind(somepca, geom.ind = "point", col.ind= mydata$label, palette = c("orange", "green3"), axes.linetype = "blank", legend.title="Group")
+fviz_pca_ind(somepca, geom.ind = "point", col.ind= mydata$label, palette = c("orange", "green3"), axes.linetype = "blank", legend.title="Group", axes = c(3,4))
+fviz_eig(somepca, addlabels = TRUE)
+# fviz_pca_var(res.pca, col.var = "black")  # for correlation circle of the variables, important: variables need deiffrent names
+# more: contribution of variables to PCi, variables according to their contributions to the principal components (dimension description)
+
+# new matrix: comb, combination of both 
+comb = cbind(connect_mat, mat_both)
+comb_label = cbind(mydata, mat_both)
+comb_pca = PCA(new, scale.unit = TRUE, graph = FALSE)
+fviz_pca_ind(comb_pca, geom.ind = "point", col.ind= new_groups$label, palette = c("#00AFBB", "#E7B800"), axes.linetype = "blank", legend.title="Group")
+fviz_eig(comb_pca, addlabels = TRUE)
+
 
 ## get the summary for more neurons to check if I capture more variability so that it is easier to see the clusters
-## build a matrix of the neuron information (not connectivity)
+## build a matrix of the neuron information (morphology)
+aotu <- neuprint_ROI_mesh("AOTU(R)")
+aotu.mesh <- as.hxsurf(aotu)
+
 a = data.frame()
 for (i in 1:length(DRAMeTu_sub1_ID)) {
   someneuron <- neuprint_read_neurons(DRAMeTu_sub1_ID[i])
   someneuron_pruned <- prune_in_volume(someneuron, surf=aotu.mesh )
   info <- as.vector(summary(someneuron_pruned))
-  #datalist[[i]] <- dat # add it to your list
   a <- rbind(a, info)
 }  
 
@@ -122,7 +134,6 @@ for (i in 1:length(DRAMeTu_sub2_ID)) {
   someneuron <- neuprint_read_neurons(DRAMeTu_sub2_ID[i])
   someneuron_pruned <- prune_in_volume(someneuron, surf=aotu.mesh )
   info <- as.vector(summary(someneuron_pruned))
-  #datalist[[i]] <- dat # add it to your list
   b <- rbind(b, info)
 }  
 
