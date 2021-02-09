@@ -20,7 +20,7 @@ PCAanalysis_metu <- function(a, namingplot){
   # print(fviz_pca_ind(somepca, geom = "point", title= "PCA on connectivity scaled matrix") )
   # print(fviz_eig(somepca, addlabels = TRUE) )
   # PCA without scaling the matrix
-  somepca <- PCA(a, scale.unit = FALSE, graph = FALSE)
+  somepca <- PCA(nonz, scale.unit = FALSE, graph = FALSE)
   print(fviz_pca_ind(somepca, geom = "point", title= "PCA on connectivity not scaled matrix") )
   print(fviz_eig(somepca, addlabels = TRUE, title="Scree plot not scaled matrix") )
   # PCA with standardization, i.e. subtracting the mean and unit variance
@@ -84,7 +84,7 @@ colnames(matrix) = TuBu.info$name
 rownames(matrix) = MeTu.info$bodyid
 
 # get the neurons and their corresponding group according to precalculated MeTu-TuBu connectivity 
-group <- read.csv(file = "/home/alikiz/Documents/WernerLab/hemibrain/MeTu_grouping.csv")
+group <- read.csv(file = "MeTu_grouping.csv")
 
 ## get the matrix for the MeTu rows: 466 rows
 MeTuconnect = matrix[rownames(matrix) %in% group$bodyid,]
