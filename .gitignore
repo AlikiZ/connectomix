@@ -2,3 +2,6 @@
 loadhemibrain.R
 .Rproj.user
 experiment*
+hemibrain_snippet*
+/connectivity_ext/gr*
+umap*
