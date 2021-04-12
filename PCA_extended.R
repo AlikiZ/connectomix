@@ -41,7 +41,7 @@ PCAanalysis_metu <- function(a, namingplot){
 #### data loading and preprocessing ####
 
 ## connection to neuprint API for dataset = "hemibrain:v1.1" by calling another script so as not to reveal token
-source("/home/alikiz/Documents/WernerLab/code/loadhemibrain.R")
+source("/home/alikiz/Documents/WernetLab/code/loadhemibrain.R")
 
 ## getting some info for our cells of interest (MC61 & MC64 aka “MeTu") including the bodyIDs
 MC61.info = neuprint_search("MC61") 
@@ -51,33 +51,6 @@ MeTu.info = rbind(MC61.info,MC64.info)
 ### Lets get some info for the TuBu neurons in the hemibrain data set
 TuBu.info = neuprint_search(".*TuBu.*")
 TuBu.info = TuBu.info[TuBu.info$name != "TuBu_L",] # removing all TuBus from the left hemisphere, 74 TuBu neurons in the right hemisphere
-
-## This is how the grouping contained in the csv file was build by Emil
-## Looking for all postsynaptic cells of MeTus
-## TODO: Why the only the postsynaptic?
-# MeTu.con = neuprint_connection_table(MeTu.info$bodyid,prepost = "POST")
-# MeTu.con$bodyid_name = neuprint_get_neuron_names(MeTu.con$bodyid)
-# MeTu.con$partner_name = neuprint_get_neuron_names(MeTu.con$partner)
-# 
-# ## focusing only on MeTu > TuBu connections
-# MeTu.TuBu.con <- MeTu.con[grep("TuBu", MeTu.con$partner_name),]
-# 
-# ### finding the strongest connecteted tubu_group for each MeTu
-# MeTu_group = MeTu.TuBu.con %>%
-#   group_by(bodyid, subgroup) %>%
-#   summarize(sum_weight = sum(weight)) %>%
-#   top_n(1,sum_weight)
-# 
-# ### looking for the rare case that a MeTu cell is equally strong connected to two differnet subgroups
-# MeTu_group %>% group_by(bodyid) %>% filter(n()>1)
-# 
-# ## there is one neuron 5812986247 which is equally strong connected to sub3 and sub4 (3 synapses each), lets
-# ## exlcude this neuron for now from our further analysis
-# MeTu_group = MeTu_group[!(MeTu_group$bodyid == "5812986247"),]
-# 
-# ### How many MeTus are in each subgroup?
-# table(MeTu_group$subgroup)
-
 
 
 ### Let's get the connectivity matrix for "MeTu > TuBu_Right” connections 
@@ -128,52 +101,41 @@ fviz_pca_var(res.pca, col.var = "black")  # for correlation circle of the variab
 
 ## Iterating over the 4 subcategories, we will extract the data for each category and perform PCA on one category per time
 ## Firstly, let us set a variabl
-print("analyze aggregated group sube for the column containing the grouping so as to exclude this column from the analysis
+print("analyze aggregated groups for the column containing the grouping so as to exclude this column from the analysis")
 colgroup = 75
-## Category sub1:1")
-nonzcol2 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 2),-colgroup], "/home/alikiz/Documents/WernerLab/plots/groupsub1.pdf")
+## Category sub1
+nonzcol2 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 2),-colgroup], "/home/alikiz/Documents/WernetLab/plots/groupsub1.pdf")
 table(nonzcol2)
 
 ## Category sub2:
 print("analyze group sub2")
-nonzcol3 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 3),-colgroup], "/home/alikiz/Documents/WernerLab/plots/groupsub2.pdf")
+nonzcol3 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 3),-colgroup], "/home/alikiz/Documents/WernetLab/plots/groupsub2.pdf")
 table(nonzcol3)
 
 ## Category sub3:
 print("analyze group sub3")
-nonzcol4 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 4),-colgroup], "/home/alikiz/Documents/WernerLab/plots/groupsub3.pdf")
+nonzcol4 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 4),-colgroup], "/home/alikiz/Documents/WernetLab/plots/groupsub3.pdf")
 table(nonzcol4)
 
 ## Category sub4:
 print("analyze group sub4")
-nonzcol5 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 5),-colgroup], "/home/alikiz/Documents/WernerLab/plots/groupsub4.pdf")
+nonzcol5 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 5),-colgroup], "/home/alikiz/Documents/WernetLab/plots/groupsub4.pdf")
 table(nonzcol5)
 
 ## Category sub4:
 print("analyze group 3 and 4")
-nzcol5 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 5 & matMeTu$label == 4),-colgroup], "/home/alikiz/Documents/WernerLab/plots/groupsub4and3.pdf")
+nzcol5 <- PCAanalysis_metu(matMeTu[which(matMeTu$label == 5 & matMeTu$label == 4),-colgroup], "/home/alikiz/Documents/WernetLab/plots/groupsub4and3.pdf")
 table(nonzcol5)
 
-# # new matrix: comb, combination of both 
-# comb = cbind(connect_mat, mat_both)
-# comb_label = cbind(mydata, mat_both)
-# comb_pca = PCA(new, scale.unit = TRUE, graph = FALSE)
-# fviz_pca_ind(comb_pca, geom.ind = "point", col.ind= new_groups$label, palette = c("#00AFBB", "#E7B800"), axes.linetype = "blank", legend.title="Group")
-# fviz_eig(comb_pca, addlabels = TRUE)
+# new matrix: comb, combination of both
+comb = cbind(connect_mat, mat_both)
+comb_label = cbind(mydata, mat_both)
+comb_pca = PCA(new, scale.unit = TRUE, graph = FALSE)
+fviz_pca_ind(comb_pca, geom.ind = "point", col.ind= new_groups$label, palette = c("#00AFBB", "#E7B800"), axes.linetype = "blank", legend.title="Group")
+fviz_eig(comb_pca, addlabels = TRUE)
 
-# TuBu.info = neuprint_search(".*TuBu.*")
-# m =neuprint_get_adjacency_matrix(inputids = MeTu.info$bodyid, outputids = TuBu.info$bodyid)
-# colnames(m) = TuBu.info$name
-# rownames(m) = MeTu.info$bodyid
-# meeetuu = m[rownames(m) %in% group$bodyid,]
-
-# TODO: boxplot in distribution
-
-# mistakes:
-# metuconnectome = as.data.frame(MeTuconnect)
-# metuconnectome$subgroup = group$subgroup
-# metuconnectome$label = as.numeric(factor( metuconnectome$subgroup) )
-# label checks
-# group$bodyid[group$subgroup == "sub1_a"] %in% rownames(MeTuconnect[which(MeTuconnect$label == 1),])
-# group$bodyid[group$subgroup == "sub1_a"] %in% DRAMeTu_sub1_ID
-# as.character(DRAMeTu_sub1_ID) %in% rownames(MeTuconnect[which(MeTuconnect$label == 1),])
+TuBu.info = neuprint_search(".*TuBu.*")
+m =neuprint_get_adjacency_matrix(inputids = MeTu.info$bodyid, outputids = TuBu.info$bodyid)
+colnames(m) = TuBu.info$name
+rownames(m) = MeTu.info$bodyid
+meeetuu = m[rownames(m) %in% group$bodyid,]
