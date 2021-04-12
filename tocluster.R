@@ -38,15 +38,9 @@ matrix = neuprint_get_adjacency_matrix(inputids = MC.info$bodyid, outputids = Tu
 colnames(matrix) = TuBu.info$name
 rownames(matrix) = MC.info$bodyid
 
-## bodyIDs from Aljoscha's cluster analysis for the two DRAMeTu subgroups: sub1 has 14 elements, sub2 has 39 elements
-DRAMeTu_sub1_ID = c(1078097609, 1201227161, 1171548392, 1076729226, 1202250779, 1077756950, 5813016373, 1198127720, 1078102468,
-                    1108796315, 1108446169, 5812987715, 1077761540, 1170179426)
-
-DRAMeTu_sub2_ID = c(1139826933, 1077756731, 1078097817, 1198809632, 1076729233, 1078102490, 1107423158, 1078102267, 1139485872,
-                    1077761532, 1078102350, 1139148877, 1140172133, 1170861854, 1201559521, 1077424293, 1201572715, 1076729262,
-                    1201210029, 5901210109, 1199155111, 1077424204, 1198809646, 1171211215, 5813104106, 1078102400, 1077424267,
-                    1139831143, 1139831106, 1200873417, 1232939935, 1140517287, 1108450770, 5812986562, 1078102419, 1169834028,
-                    1202250762, 1201905111, 1046039977)
+## bodyIDs selection with some of our prior neuroscience knowledge :) - the neurons caracterized by an integer are forming the subgroups and are defined in the vector
+DRAMeTu_sub1_ID = c(...)
+DRAMeTu_sub2_ID = c(...)
 
 ## get the matrix for the DRAMeTu rows: 14 + 39 = 53 rows
 DRAMeTu_connect = matrix[rownames(matrix) %in% c(DRAMeTu_sub1_ID,DRAMeTu_sub2_ID),]
@@ -64,15 +58,16 @@ scaled = scale(connect_mat, center=FALSE, scale=colSums(connect_mat))
 #### algorithms ####
 
 
-# K-Means Cluster Analysis, the initial pick of the center influences the output so we change the initial canter by setting nstart = various_values
+#### K-Means Cluster Analysis ####
+# the initial pick of the center influences the output so we change the initial canter by setting nstart = various_values
 fit <- kmeans(x = connect_mat, centers = 2, nstart = 1)
 fit2 <- kmeans(x = connect_mat, centers = 2, nstart = 10)
 # explore results of k-means e.g. size of groups
 fit$size
 fit2$size
 
-# calculate evaluation measures assuming there are true labels (correct classes of neurons). having true labels is not typical in unsupervised models like clustering
-# the labels come from Aljoscha's cluster analysis. if rowname of neuron is in the DRAMeTu_sub1 then next line evaluates to TRUE (equivalent to 1) + 1 = 2; (possibly TO DO summary statistics by group)
+# calculate evaluation measures assuming there are true labels (correct classes of neurons). the labels provided are not absolutely sure, come from other analysis and are to be explored
+# if rowname of neuron is in the DRAMeTu_sub1 then next line evaluates to TRUE (equivalent to 1) + 1 = 2
 true_classes = rownames(connect_mat) %in% DRAMeTu_sub1_ID + 1
 names(true_classes) = rownames(connect_mat)
 # append cluster assignment at the end of matrix mydata
@@ -91,6 +86,7 @@ plot(res.hc, cex = 0.5)
 clusterCut <- cutree(res.hc, 2)
 cm2 = as.matrix(table(Actual= true_classes, Predicted=clusterCut))
 cm2 
+
 
 #### PCA analysis ####
 # PCA - not scaled and scaled --> the second plot of not scaled data reveals a better result
@@ -157,12 +153,12 @@ fviz_pca_ind(morphpca, geom.ind = "point", col.ind= mydata$label, palette = c("o
 pca_res <- prcomp(mat_both, scale. = FALSE)
 autoplot(pca_res, data = mydata, colour = "true_classes")
 
-## TO DO: normal distribution is not necessary (check if the distribution is normal per column), plot more PCAs because those do not show much
+
 # http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/112-pca-principal-component-analysis-essentials/#eigenvalues-variances
 
-# discussed on Friday
+# further ideas
 # DRAMeTu_no_1 <- neuprint_read_neurons("1078097609")
 # aotu <- neuprint_ROI_mesh("AOTU(R)")
 # aotu.mesh <- as.hxsurf(aotu)
 # DRAMETu_pruned <- prune_in_volume(DRAMeTu_no_1,surf = aotu.mesh)
-# b<-summary(DRAMETu_pruned) 
+# b <-summary(DRAMETu_pruned) 
