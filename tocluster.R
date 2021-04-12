@@ -20,7 +20,7 @@ confmat <- function(actual, predicted){
 #### data loading and preprocessing ####
 
 ## connection to neuprint API for dataset = "hemibrain:v1.1" by calling another script so as not to reveal token
-source("/home/alikiz/Documents/WernerLab/code/loadhemibrain.R")
+source("/home/aliki/WernetLab/code/loadhemibrain.R")
 
 ## getting some info for our cells of interest (MC61 & MC64 aka “MeTu") including the bodyIDs
 MC61.info = neuprint_search("MC61") 
